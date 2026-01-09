@@ -1,42 +1,27 @@
-import sys
 from collections import deque
-from array import array
 
 def main():
     n: int = int(input())
+    moves: list[tuple[int]] = [(1,2),(2,1),(-1,2),(-2,1),(1,-2),(2,-1),(-1,-2),(-2,-1)]
+    dist: list[list[int]] = [[-1] * n for _ in range(n)] 
+    dist[0][0] = 0
+    queue = deque()
+    queue.append((0, 0))
 
-    total = n * n
-    dist = array('i', [-1]) * total  
-    dist[0] = 0
-
-    moves = ((2, 1), (1, 2), (-1, 2), (-2, 1),
-             (-2, -1), (-1, -2), (1, -2), (2, -1))
-
-    q = deque([0])
-    append = q.append
-    popleft = q.popleft
-    nn = n
-    dists = dist
-
-    while q:
-        idx = popleft()
-        r, c = divmod(idx, nn)
-        nd = dists[idx] + 1
-
+    while queue:
+        row, col = queue.popleft()
         for dr, dc in moves:
-            nr = r + dr
-            nc = c + dc
-            if 0 <= nr < nn and 0 <= nc < nn:
-                nidx = nr * nn + nc
-                if dists[nidx] == -1:
-                    dists[nidx] = nd
-                    append(nidx)
+            next_row = row + dr
+            next_col = col + dc
+            if 0 <= next_row < n and 0 <= next_col < n and dist[next_row][next_col] == -1:
+                dist[next_row][next_col] = dist[row][col] + 1
+                queue.append((next_row, next_col))
 
-    out_lines = []
-    for r in range(nn):
-        off = r * nn
-        out_lines.append(' '.join(str(dists[off + c]) for c in range(nn)))
-    print('\n'.join(out_lines))
+    for cell in dist:
+        print(*cell)
+
+
+ 
 
 if __name__ == "__main__":
     main()
